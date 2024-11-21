@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparação de Preços</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .box {
+    background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      text-align: center;
+      animation: fadeIn 1s forwards;
+      opacity: 0;
+    }
+
+    /* Animação de fade-in */
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+
+  h1 {
+    color: #333;
+    text-align: center
+  }
+
+  label,
+  select {
+    display: flex;
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    text-align: center
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+    background-color: #ffffff;
+
+  }
+
+  th {
+    background-color: #f4f4f4;
+  }
+
+  .result {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+
+  #chart-container {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .button {
+    padding: 10px;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    background-color: #3a4441;
+    color: white;
+  }
+</style>
+
+  <script>
+    const data = [
+      { mercado: "Mercado A", produto: "Arroz", preco: 20.50, regiao: "Centro", mes: "Janeiro" },
+      { mercado: "Mercado A", produto: "Arroz", preco: 21.00, regiao: "Centro", mes: "Fevereiro" },
+      { mercado: "Mercado A", produto: "Arroz", preco: 19.80, regiao: "Centro", mes: "Março" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 19.90, regiao: "Zona Norte", mes: "Janeiro" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 20.10, regiao: "Zona Norte", mes: "Fevereiro" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 20.50, regiao: "Zona Norte", mes: "Março" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 21.00, regiao: "Zona Sul", mes: "Janeiro" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 20.80, regiao: "Zona Sul", mes: "Fevereiro" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 21.50, regiao: "Zona Sul", mes: "Março" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.50, regiao: "Centro", mes: "Janeiro" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.20, regiao: "Centro", mes: "Fevereiro" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.00, regiao: "Centro", mes: "Março" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 4.90, regiao: "Zona Norte", mes: "Janeiro" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 5.10, regiao: "Zona Norte", mes: "Fevereiro" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 5.30, regiao: "Zona Norte", mes: "Março" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 5.70, regiao: "Zona Sul", mes: "Janeiro" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 5.60, regiao: "Zona Sul", mes: "Fevereiro" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 5.80, regiao: "Zona Sul", mes: "Março" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 3.50, regiao: "Centro", mes: "Janeiro" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 3.60, regiao: "Centro", mes: "Fevereiro" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 3.70, regiao: "Centro", mes: "Março" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.40, regiao: "Zona Norte", mes: "Janeiro" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.50, regiao: "Zona Norte", mes: "Fevereiro" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.60, regiao: "Zona Norte", mes: "Março" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 3.80, regiao: "Zona Sul", mes: "Janeiro" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 3.90, regiao: "Zona Sul", mes: "Fevereiro" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 4.00, regiao: "Zona Sul", mes: "Março" },
+      { mercado: "Mercado A", produto: "Arroz", preco: 20.30, regiao: "Centro", mes: "Abril" },
+      { mercado: "Mercado A", produto: "Arroz", preco: 20.80, regiao: "Centro", mes: "Maio" },
+      { mercado: "Mercado A", produto: "Arroz", preco: 21.10, regiao: "Centro", mes: "Junho" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 19.70, regiao: "Zona Norte", mes: "Abril" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 20.00, regiao: "Zona Norte", mes: "Maio" },
+      { mercado: "Mercado B", produto: "Arroz", preco: 20.40, regiao: "Zona Norte", mes: "Junho" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 21.20, regiao: "Zona Sul", mes: "Abril" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 21.40, regiao: "Zona Sul", mes: "Maio" },
+      { mercado: "Mercado C", produto: "Arroz", preco: 21.60, regiao: "Zona Sul", mes: "Junho" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.10, regiao: "Centro", mes: "Abril" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.30, regiao: "Centro", mes: "Maio" },
+      { mercado: "Mercado A", produto: "Feijão", preco: 5.50, regiao: "Centro", mes: "Junho" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 5.40, regiao: "Zona Norte", mes: "Abril" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 5.50, regiao: "Zona Norte", mes: "Maio" },
+      { mercado: "Mercado B", produto: "Feijão", preco: 5.70, regiao: "Zona Norte", mes: "Junho" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 5.90, regiao: "Zona Sul", mes: "Abril" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 6.00, regiao: "Zona Sul", mes: "Maio" },
+      { mercado: "Mercado C", produto: "Feijão", preco: 6.20, regiao: "Zona Sul", mes: "Junho" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 3.80, regiao: "Centro", mes: "Abril" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 3.90, regiao: "Centro", mes: "Maio" },
+      { mercado: "Mercado A", produto: "Açúcar", preco: 4.00, regiao: "Centro", mes: "Junho" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.70, regiao: "Zona Norte", mes: "Abril" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.80, regiao: "Zona Norte", mes: "Maio" },
+      { mercado: "Mercado B", produto: "Açúcar", preco: 3.90, regiao: "Zona Norte", mes: "Junho" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 4.10, regiao: "Zona Sul", mes: "Abril" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 4.20, regiao: "Zona Sul", mes: "Maio" },
+      { mercado: "Mercado C", produto: "Açúcar", preco: 4.30, regiao: "Zona Sul", mes: "Junho" }
+    ];
+
+    function goToCadastro() {
+      window.location.href = "cadastro.html";
+    }
+
+    let chartInstance;
+
+    function analisarPrecos() {
+      const product = document.getElementById("product").value;
+      const region = document.getElementById("region").value;
+
+      // Filtrar os dados com base no produto e região selecionados
+      const filtrados = data.filter(item =>
+        item.produto === product &&
+        (region === "" || item.regiao === region)
+      );
+
+      // Se não houver dados, exibir mensagem e interromper
+      if (filtrados.length === 0) {
+        document.getElementById("output").innerHTML = "<p>Nenhum dado encontrado para essa seleção.</p>";
+        return;
+      }
+
+      // Organizar os preços por mercado e mes
+      const mercados = {};
+      const meses = [...new Set(filtrados.map(item => item.mes))]; // Meses únicos
+      filtrados.forEach(item => {
+        if (!mercados[item.mercado]) {
+          mercados[item.mercado] = {};
+        }
+        mercados[item.mercado][item.mes] = item.preco;
+      });
+
+      // Preparar dados para o gráfico
+      const datasets = Object.entries(mercados).map(([mercado, precos]) => ({
+        label: mercado,
+        data: meses.map(mes => precos[mes] || null), // Preços para cada mês
+        backgroundColor: getColor(),
+        borderColor: getColor(),
+        borderWidth: 1
+      }));
+
+      // Atualizar ou criar o gráfico
+      const ctx = document.getElementById("priceChart").getContext("2d");
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      chartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: meses, // Meses como rótulos no eixo X
+          datasets: datasets
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true },
+            x: {
+              title: {
+                display: true,
+                text: 'Meses'
+              }
+            }
+          }
+        }
+      });
+
+      // Exibir dados em tabela
+      let outputHtml = "<table><tr><th>Mercado</th><th>Detalhes por Mês</th></tr>";
+      Object.entries(mercados).forEach(([mercado, precos]) => {
+        outputHtml += `<tr><td>${mercado}</td><td>${meses.map(mes => `${mes}: R$ ${precos[mes] || 'N/A'}`).join(", ")}</td></tr>`;
+      });
+      outputHtml += "</table>";
+      document.getElementById("output").innerHTML = outputHtml;
+    }
+
+    // Função para gerar uma cor aleatória para os gráficos
+    function getColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+  </script>
+
+
+<body>
+  <div class="box">
+    <h1>Comparação de Preços de Mercados</h1>
+
+    <label for="product">Selecione o Produto:</label>
+    <select id="product">
+      <option value="Arroz">Arroz</option>
+      <option value="Feijão">Feijão</option>
+      <option value="Açúcar">Açúcar</option>
+    </select>
+
+    <label for="region">Selecione a Região:</label>
+    <select id="region">
+      <option value="">Todas as Regiões</option>
+      <option value="Centro">Centro</option>
+      <option value="Zona Norte">Zona Norte</option>
+      <option value="Zona Sul">Zona Sul</option>
+    </select>
+    <button class="button" onclick="analisarPrecos()">Analisar Preços</button>
+    <button class="button" id="pro-btn" onclick="goToCadastro()">Tornar-se Membro Pro</button>
+
+  </div>
+
+  <div id="output"></div>
+
+  <div id="chart-container">
+    <canvas id="priceChart"></canvas>
+  </div>
+
+</body>
+
+</html>
